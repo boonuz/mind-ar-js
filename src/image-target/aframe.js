@@ -5,6 +5,7 @@ AFRAME.registerSystem('mindar-image-system', {
   container: null,
   video: null,
   processingImage: false,
+  imageTargetFile: null,
 
   init: function() {
     this.anchorEntities = [];
@@ -22,6 +23,7 @@ AFRAME.registerSystem('mindar-image-system', {
     this.warmupTolerance = warmupTolerance;
     this.showStats = showStats;
     this.ui = new UI({uiLoading, uiScanning, uiError});
+    this.imageTargetFile = fetch(this.imageTargetSrc);
   },
 
   registerAnchor: function(el, targetIndex) {
@@ -143,7 +145,8 @@ AFRAME.registerSystem('mindar-image-system', {
     this._resize();
     window.addEventListener('resize', this._resize.bind(this));
 
-    const {dimensions: imageTargetDimensions} = await this.controller.addImageTargets(this.imageTargetSrc);
+    const file = await this.imageTargetFile
+    const { dimensions: imageTargetDimensions } = await this.controller.addImageTargets(file);
 
     for (let i = 0; i < this.anchorEntities.length; i++) {
       const {el, targetIndex} = this.anchorEntities[i];

@@ -72,9 +72,9 @@ class Controller {
     console.table(tf.memory());
   }
 
-  addImageTargets(fileURL) {
+  addImageTargets(content) {
     return new Promise(async (resolve, reject) => {
-      const content = await fetch(fileURL);
+      //const content = await fetch(fileURL);
       const buffer = await content.arrayBuffer();
       const result = this.addImageTargetsFromBuffer(buffer);
       resolve(result);
