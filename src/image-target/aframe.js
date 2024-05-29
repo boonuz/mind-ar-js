@@ -24,6 +24,8 @@ AFRAME.registerSystem('mindar-image-system', {
     this.showStats = showStats;
     this.ui = new UI({uiLoading, uiScanning, uiError});
     this.imageTargetFile = fetch(this.imageTargetSrc);
+
+    console.log('setupTime', (new Date()) - globalThis.startTime)
   },
 
   registerAnchor: function(el, targetIndex) {
@@ -159,10 +161,13 @@ AFRAME.registerSystem('mindar-image-system', {
     this.ui.hideLoading();
     this.ui.showScanning();
 
-    console.log('windowTime', (new Date()) - globalThis.startTime)
+    console.log('arReady', (new Date()) - globalThis.startTime)
 
-    await this.controller.dummyRun(this.video);
-    this.controller.processVideo(this.video);
+    setTimeout(async () => {
+      await this.controller.dummyRun(this.video);
+      this.controller.processVideo(this.video);
+      console.log('processVideoTime', (new Date()) - globalThis.startTime)
+    });
   },
 
   _resize: function() {
