@@ -157,6 +157,8 @@ AFRAME.registerSystem('mindar-image-system', {
     this.ui.hideLoading();
     this.ui.showScanning();
 
+    console.log('windowTime', (new Date()) - globalThis.startTime)
+
     this.controller.processVideo(this.video);
   },
 
