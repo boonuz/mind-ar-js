@@ -155,13 +155,13 @@ AFRAME.registerSystem('mindar-image-system', {
       }
     }
 
-    await this.controller.dummyRun(this.video);
     this.el.emit("arReady");
     this.ui.hideLoading();
     this.ui.showScanning();
 
     console.log('windowTime', (new Date()) - globalThis.startTime)
 
+    await this.controller.dummyRun(this.video);
     this.controller.processVideo(this.video);
   },
 
