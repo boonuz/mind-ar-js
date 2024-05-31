@@ -5,6 +5,11 @@
   <head>
     <script>
       globalThis.startTime = new Date()
+      navigator.mediaDevices.getUserMedia({
+        audio: false, video: {
+          facingMode: 'environment',
+        }
+      })
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://aframe.io/releases/1.4.1/aframe.min.js"></script>
@@ -26,7 +31,7 @@
 
   <body>
     <div class="example-container">
-      <a-scene mindar-image="imageTargetSrc: ./assets/card-example/card.mind; showStats: true;" embedded color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+      <a-scene mindar-image="imageTargetSrc: ./assets/card-example/card.mind" embedded color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
         <a-assets timeout="1">
           <img id="card" src="./assets/card-example/card.png" />
           <a-asset-item id="avatarModel" src="./assets/card-example/softmind/scene.gltf"></a-asset-item>

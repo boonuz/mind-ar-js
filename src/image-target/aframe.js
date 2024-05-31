@@ -7,6 +7,8 @@ AFRAME.registerSystem('mindar-image-system', {
   processingImage: false,
   imageTargetFile: null,
 
+  userMediaPromise: null,
+
   init: function() {
     this.anchorEntities = [];
   },
@@ -24,6 +26,7 @@ AFRAME.registerSystem('mindar-image-system', {
     this.showStats = showStats;
     this.ui = new UI({uiLoading, uiScanning, uiError});
     this.imageTargetFile = fetch(this.imageTargetSrc);
+    this.userMediaPromise = this._setupUserMedia()
 
     console.log('setupTime', (new Date()) - globalThis.startTime)
   },
@@ -72,38 +75,48 @@ AFRAME.registerSystem('mindar-image-system', {
     this.controller.processVideo(this.video);
   },
 
-  _startVideo: function() {
-    this.video = document.createElement('video');
+  _setupUserMedia: function() {
+    return new Promise(res => {
+      this.video = document.createElement('video');
 
-    this.video.setAttribute('autoplay', '');
-    this.video.setAttribute('muted', '');
-    this.video.setAttribute('playsinline', '');
-    this.video.style.position = 'absolute'
-    this.video.style.top = '0px'
-    this.video.style.left = '0px'
-    this.video.style.zIndex = '-2'
-    this.container.appendChild(this.video);
+      this.video.setAttribute('autoplay', '');
+      this.video.setAttribute('muted', '');
+      this.video.setAttribute('playsinline', '');
+      this.video.style.position = 'absolute'
+      this.video.style.top = '0px'
+      this.video.style.left = '0px'
+      this.video.style.zIndex = '-2'
 
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      // TODO: show unsupported error
-      this.el.emit("arError", {error: 'VIDEO_FAIL'});
-      this.ui.showCompatibility();
-      return;
-    }
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        // TODO: show unsupported error
+        this.el.emit("arError", { error: 'VIDEO_FAIL' });
+        this.ui.showCompatibility();
+        return;
+      }
 
-    navigator.mediaDevices.getUserMedia({audio: false, video: {
-      facingMode: 'environment',
-    }}).then((stream) => {
-      this.video.addEventListener( 'loadedmetadata', () => {
-        //console.log("video ready...", this.video);
-        this.video.setAttribute('width', this.video.videoWidth);
-        this.video.setAttribute('height', this.video.videoHeight);
-        this._startAR();
+      navigator.mediaDevices.getUserMedia({
+        audio: false, video: {
+          facingMode: 'environment',
+        }
+      }).then((stream) => {
+        this.video.addEventListener('loadedmetadata', () => {
+          //console.log("video ready...", this.video);
+          this.video.setAttribute('width', this.video.videoWidth);
+          this.video.setAttribute('height', this.video.videoHeight);
+          res({ stream })
+        });
+        this.video.srcObject = stream;
+      }).catch((err) => {
+        console.log("getUserMedia error", err);
+        this.el.emit("arError", { error: 'VIDEO_FAIL' });
       });
-      this.video.srcObject = stream;
-    }).catch((err) => {
-      console.log("getUserMedia error", err);
-      this.el.emit("arError", {error: 'VIDEO_FAIL'});
+    })
+  },
+
+  _startVideo: function() {
+    this._setupUserMedia().then(() => {
+      this.container.appendChild(this.video);
+      this._startAR()
     });
   },
 
