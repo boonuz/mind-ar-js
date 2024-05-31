@@ -25,7 +25,7 @@ AFRAME.registerSystem('mindar-image-system', {
     this.warmupTolerance = warmupTolerance;
     this.showStats = showStats;
     this.ui = new UI({uiLoading, uiScanning, uiError});
-    this.imageTargetFile = fetch(this.imageTargetSrc);
+    this.imageTargetFile = fetch(this.imageTargetSrc, { priority: 'high' });
     this.userMediaPromise = this._setupUserMedia()
 
     console.log('setupTime', (new Date()) - globalThis.startTime)
